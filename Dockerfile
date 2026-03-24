@@ -1,7 +1,5 @@
-# Use official Node.js 18 slim image
 FROM node:18-slim
 
-# Install Chromium and all Puppeteer dependencies
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     fonts-liberation \
@@ -41,27 +39,19 @@ RUN apt-get update && apt-get install -y \
     wget \
     xdg-utils \
     --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*  
-# cleans apt cache — keeps image size small
+    && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files first (Docker layer caching — faster rebuilds)
 COPY package*.json ./
 
-# Install Node dependencies
 RUN npm install
 
-# Copy rest of the source code
 COPY . .
 
-# Create a directory for WhatsApp LocalAuth session persistence
 RUN mkdir -p /app/.wwebjs_auth
 
-# Expose the port your Express server runs on
 EXPOSE 4000
 
-# Start the server
-CMD ["node", "server.js"]
-
+# ✅ pointing to src folder
+CMD ["node", "src/server.js"]
